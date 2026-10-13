@@ -8,79 +8,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// 1. La Empresa / Local
-model Store {
-  id          String    @id @default(uuid())
-  name        String
-  slug        String    @unique // Ej: "mi-hamburgueseria" para la URL
-  description String?
-  logoUrl     String?
-  isActive    Boolean   @default(true) 
-  
-  // Relaciones
-  categories  Category[]
-  products    Product[]
-  orders      Order[]
-  
-  createdAt   DateTime  @default(now())
-}
-
-// 2. Categorías (Pertenecen a un Store)
-model Category {
-  id        String    @id @default(uuid())
-  storeId   String
-  name      String    // Ej: "Hamburguesas", "Bebidas"
-  
-  store     Store     @relation(fields: [storeId], references: [id])
-  products  Product[]
-}
-
-// 3. Productos (Pertenecen a un Store y a una Categoría)
-model Product {
-  id          String    @id @default(uuid())
-  storeId     String
-  categoryId  String
-  name        String
-  price       Float     // O Int si manejan centavos
-  description String?
-  imageUrl    String?
-  isAvailable Boolean   @default(true)
-
-  store       Store     @relation(fields: [storeId], references: [id])
-  category    Category  @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[]
-}
-
-// 4. El Pedido del Cliente
-model Order {
-  id            String      @id @default(uuid())
-  storeId       String      // A qué local le compraron
-  customerName  String
-  customerPhone String
-  total         Float
-  status        OrderStatus @default(PENDING)
-
-  store         Store       @relation(fields: [storeId], references: [id])
-  items         OrderItem[]
-  createdAt     DateTime    @default(now())
-}
-
-// 5. Los ítems dentro del pedido
-model OrderItem {
-  id        String  @id @default(uuid())
-  orderId   String
-  productId String
-  quantity  Int
-  price     Float   // Precio al momento de la compra (histórico)
-
-  order     Order   @relation(fields: [orderId], references: [id])
-  product   Product @relation(fields: [productId], references: [id])
-}
-
-enum OrderStatus {
-  PENDING
-  PREPARING
-  READY
-  DELIVERED
-  CANCELLED
+// Tabla Usuarios
+model Usuarios {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  nombre      String?
+  puntos      Int
+  fechaCreacion DateTime @default(now())
 }
